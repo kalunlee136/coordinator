@@ -106,7 +106,7 @@ module.exports = function(app){
         return res.status(400).json({message: 'Please fill out all fields'});
       }
       
-      console.log(req.body);
+      console.log(req.body)
       var user = new User();
     
       user.username = req.body.username;
