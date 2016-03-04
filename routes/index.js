@@ -1,12 +1,17 @@
-//var mongoose = require('mongoose');
 var passport = require('passport');
 var jwt = require('express-jwt');
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
-var Post = require('../models/Posts');
-var Comment = require('../models/Comments');
+var Attendance = require('../models/Attendances');
 var User = require('../models/Users')
+var Yelp = require('yelp');
 
-
+    
+var yelp = new Yelp({
+  consumer_key: 'awhg7I0mWCV2yi7uCdzlvw',
+  consumer_secret: '-bjBF5EWeF3ekmPme0erhtOqFgo',
+  token: 'cAYTnAA1sJFHBT6bHjVZn33LJGNmZya2',
+  token_secret: 'PivrWTGDvlz_cpHoKXjN9AHdR-c',
+});
 
 module.exports = function(app){
     /* GET home page. */
@@ -14,93 +19,77 @@ module.exports = function(app){
       res.render('index');
     });
     
-    //begin param post routes
-    app.param('post', function(req, res, next, id) {
-      var query = Post.findById(id);
-    
-      query.exec(function (err, post){
-        if (err) { return next(err); }
-        if (!post) { return next(new Error('can\'t find post')); }
-    
-        req.post = post;
-        return next();
-      });
-    });
-    
-    app.get('/posts', function(req, res, next) {
-      Post.find(function(err, posts){
-        if(err){ return next(err); }
-    
-        res.json(posts);
-      });
-    });
-    
-    app.post('/posts', auth, function(req, res, next) {
-      var post = new Post(req.body);
-      post.author = req.payload.username;
-      
-      post.save(function(err, post){
-        if(err){ return next(err); }
-    
-        res.json(post);
-      });
-    });
-    
-    app.get('/posts/:post', function(req, res) {
-      req.post.populate('comments', function(err, post) {
-        if (err) { return next(err); }
-    
-        res.json(post);
-      });
-    });
-    
-    //end param post routes
-    app.put('/posts/:post/upvote', auth, function(req, res, next) {
-      req.post.upvote(function(err, post){
-        if (err) { return next(err); }
-        
-        res.json(post);
-      });
-    });
-    
-    //begin param comment routes
-     app.param('comment', function(req, res, next, id) {
-      var query = Comment.findById(id);
-    
-      query.exec(function (err, comment){
-        if (err) { return next(err); }
-        if (!comment) { return next(new Error('can\'t find comment')); }
-    
-        req.comment = comment;
-        return next();
-      });
-     });
-     
-     app.post('/posts/:post/comments', auth , function(req, res, next) {
-      var comment = new Comment(req.body);
-      comment.post = req.post;
-      comment.author = req.payload.username;
-    
-      comment.save(function(err, comment){
-        if(err){ return next(err); }
-    
-        req.post.comments.push(comment);
-        req.post.save(function(err, post) {
-          if(err){ return next(err); }
-    
-          res.json(comment);
+    app.post('/locations', function(req, res, next){
+      // See http://www.yelp.com/developers/documentation/v2/search_api
+      console.log('city',req.body);
+      Attendance.find({city: req.body.location}, function(err, places){
+        var names = places.map(function(p){
+          return p.name;
+        });
+
+        yelp.search({ term: 'club', location: req.body.location}).then(function (data) {
+          var b = data.businesses;
+          for(var i=0;i<b.length;i++){
+            b[i].upvotes = 0;
+            b[i].city = req.body.location
+            //b[i].address = b[i].location.display_address[0] + ' ' + b[i].location.display_address[ b[i].location.display_address.length -1 ];
+          }
+          console.log('locations', b[0].location);
+          
+          var unique = b.filter(function(business){
+            return names.indexOf(business.name) === -1;
+          });
+
+          for(var i=0;i<places.length;i++){
+            unique.unshift(places[i]);
+          }
+          
+          res.json(unique);
         });
       });
-     });
+      
+    });
     
-     app.put('/posts/:post/comments/:comment/upvote', auth, function(req, res, next) {
-        req.comment.upvote(function(err, comment){
-        if (err) { return next(err); }
-        
-        res.json(comment);
+    app.get('/attendance',function(req,res,next){
+      Attendance.find(function(err, attendances){
+        if(err){ return next(err); }
+    
+        res.json(attendances);
       });
     });
     
+    app.put('/attendance', auth,function(req,res,next){
+      Attendance.findOne({name: req.body.location.name, city: req.body.location.city},function(err, place){
+        console.log('place',place);
+        if(place !== null){
+          if (place.users.indexOf(req.payload._id) === -1){
+              place.upvote();
+              place.users.push(req.payload._id)
+              place.save(function(err,p){
+                res.json(p)
+              });
+          }else{
+            place.downvote();
+            place.users.splice(place.users.indexOf(req.payload._id), 1);
+            place.save(function(err,p){
+              res.json(p)
+            });
+          }
+          
+        }else{
+          var attendance = new Attendance(req.body.location);
+          attendance.upvotes += 1;
+          attendance.users.push(req.payload._id);
+          
+          attendance.save(function(err,att){
+            if(err) console.log(err);
+              
+            res.json(att);
+          });
+        }
+      });
+    });
+
     app.post('/register', function(req, res, next){
       if(!req.body.username || !req.body.password){
         return res.status(400).json({message: 'Please fill out all fields'});

@@ -1,29 +1,15 @@
-app.config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider) {
+app.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider) {
     $stateProvider
       .state('home', {
-        url: '',
+        url: '/',
         views:{
           'header':{templateUrl:'/partials/header.html'},
           'body':{templateUrl: 'partials/home.html', controller: 'MainCtrl'}
-        },
-         resolve: {
-          postPromise: ['posts', function(posts){
-            return posts.getAll();
-          }]
-         }
-      })
-    
-      .state('posts', {
-        url: '/posts/:id',
-        views:{
-          'header':{templateUrl:'/partials/header.html'},
-          'body':{templateUrl: 'partials/posts.html', controller: 'PostsCtrl'}
-        },
-        resolve: {
-          post: ['$stateParams', 'posts', function($stateParams, posts) {
-            return posts.get($stateParams.id);
-          }]
         }
+      })
+      
+      .state('home.locations',{
+          templateUrl: 'partials/home.locations.html'
       })
       
       .state('register', {
@@ -51,14 +37,7 @@ app.config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlR
           }
         }]
       })
-      
-      .state('profile',{
-        url:'/profile',
-        views:{
-          'body':{templateUrl:'partials/profile.html',controller:'UserCtrl'}
-        }
-      })
-      
+    $locationProvider.html5Mode(true);
     $urlRouterProvider.otherwise('');
 }]);
 

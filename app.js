@@ -6,7 +6,7 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 
 var routes = require('./routes/index');
-
+var port = process.env.PORT || 8080;
 var app = express();
 
 // view engine setup
@@ -15,15 +15,12 @@ app.set('view engine', 'ejs');
 
 //connect to mongoDB server
 var mongoose = require('mongoose');
-require('./models/Posts');
-require('./models/Comments');
+require('./models/Attendances');
 require('./models/Users');
 require('./config/passport');
 
 mongoose.connect('mongodb://localhost/news');
 
-
-// uncomment after placing your favicon in /public
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -33,4 +30,7 @@ app.use(passport.initialize());
 
 routes(app);
 
-module.exports = app;
+app.listen(port, function(err,a){
+    console.log('listening to port', port);
+});
+

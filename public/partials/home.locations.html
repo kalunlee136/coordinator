@@ -1,0 +1,17 @@
+<div class="row">
+    <div class="col-md-6 col-lg-12 col-sm-12 club-list">
+        <div class="box" ng-repeat="location in locations">
+                <img class="img-grid" ng-src="{{location.image_url}}" alt="{{location.name}}"/>
+                
+                <div class="relative">
+                    <a ng-href={{location.url}}>{{location.name}} </a>
+                    <br> {{location.location.display_address[0]}} 
+                    <br> {{location.location.display_address[1]}} 
+                    <br> {{location.location.display_address[2]}} 
+                    <br> <button ng-click="submit_attendance(location,$index, location.city)">Attend Event ({{location.upvotes}})</button>
+                </div>
+                
+            </a>
+        </div>    
+    </div>
+</div>
