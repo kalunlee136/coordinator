@@ -19,8 +19,8 @@ require('./models/Attendances');
 require('./models/Users');
 require('./config/passport');
 
-//mongoose.connect('mongodb://localhost/news');
-mongoose.connect('mongodb://kalunlee136:564213ab@ds019648.mlab.com:19648/coordinator');
+mongoose.connect('mongodb://localhost/news');
+
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
