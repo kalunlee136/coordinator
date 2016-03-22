@@ -24,7 +24,6 @@ a{
 }
 
 .box:hover{
-  border: 1px outset;
   background-color: rgba(204, 204, 204, 0.24);
   border-radius: 0.5em;
 }

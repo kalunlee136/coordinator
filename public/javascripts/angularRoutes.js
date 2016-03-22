@@ -1,15 +1,15 @@
 app.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider) {
     $stateProvider
+       .state('home.locations',{
+          templateUrl: 'partials/home.locations.html'
+       })
+      
       .state('home', {
         url: '/',
         views:{
           'header':{templateUrl:'/partials/header.html'},
           'body':{templateUrl: 'partials/home.html', controller: 'MainCtrl'}
         }
-      })
-      
-      .state('home.locations',{
-          templateUrl: 'partials/home.locations.html'
       })
       
       .state('register', {
@@ -36,6 +36,13 @@ app.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($
             $state.go('home');
           }
         }]
+      })
+      
+      .state('profile',{
+        url:'/profile',
+        views:{'body':{templateUrl: 'partials/login.html', controller:'MainCtrl'}
+          
+        }
       })
     $locationProvider.html5Mode(true);
     $urlRouterProvider.otherwise('');

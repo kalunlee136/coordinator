@@ -20,7 +20,6 @@ require('./models/Users');
 require('./config/passport');
 
 mongoose.connect('mongodb://localhost/news');
-//mongoose.connect('mongodb://kalunlee136:564213ab@ds019648.mlab.com:19648/coordinator');
 
 app.use(logger('dev'));
 app.use(bodyParser.json());

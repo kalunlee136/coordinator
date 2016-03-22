@@ -1,17 +1,23 @@
 var app = angular.module('flapperNews', ['ui.router']);
 
 app.controller('MainCtrl', ['$scope','clubs', '$state', 'auth', function($scope,clubs,$state,auth){
+    $scope.location = clubs.location;
     $scope.locations = clubs.locations;
+    
     $scope.attendances = clubs.attendances;
     $scope.isLoggedIn = auth.isLoggedIn;
     $scope.currentUser = auth.currentUser;
     $scope.logOut = auth.logOut;
+    
+    if($scope.locations.length > 0 && $state.$current.name === "home")
+      $state.transitionTo('home.locations');
     
     $scope.incrementUpvotes = function(post) {
       clubs.upvote(post);
     };
     
     $scope.submit_location = function(){
+      clubs.save_place($scope.location);
       clubs.get_all_locations($scope.location);
     };
    
@@ -23,6 +29,7 @@ app.controller('MainCtrl', ['$scope','clubs', '$state', 'auth', function($scope,
      }  
    }
    
+   console.log(clubs.locations)
 
 }]);
 
@@ -58,6 +65,12 @@ app.factory('clubs', ['$http','$state', 'auth', function($http,$state, auth){
     locations:[],
   };
   
+  factory.location = '';
+  
+  factory.save_place = function(loc){
+    factory.location = loc;
+  }
+  
   factory.get_all_locations = function(loc){
     var obj = {location:loc};
     return $http.post('/locations', obj).then(function(data){
@@ -80,8 +93,6 @@ app.factory('clubs', ['$http','$state', 'auth', function($http,$state, auth){
   
   return factory;
 }]);
-
-
 
 app.factory('auth', ['$http', '$window', '$state', function($http, $window, $state){
    var auth = {};

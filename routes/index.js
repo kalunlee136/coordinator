@@ -21,7 +21,6 @@ module.exports = function(app){
     
     app.post('/locations', function(req, res, next){
       // See http://www.yelp.com/developers/documentation/v2/search_api
-      console.log('city',req.body);
       Attendance.find({city: req.body.location}, function(err, places){
         var names = places.map(function(p){
           return p.name;
@@ -32,7 +31,6 @@ module.exports = function(app){
           for(var i=0;i<b.length;i++){
             b[i].upvotes = 0;
             b[i].city = req.body.location
-            //b[i].address = b[i].location.display_address[0] + ' ' + b[i].location.display_address[ b[i].location.display_address.length -1 ];
           }
           console.log('locations', b[0].location);
           
