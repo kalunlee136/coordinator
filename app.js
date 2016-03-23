@@ -20,8 +20,8 @@ require('./models/Attendances');
 require('./models/Users');
 require('./config/passport');
 
-//mongoose.connect(process.env.DB_DEV);
-mongoose.connect(process.env.DB_PROD);
+mongoose.connect(process.env.DB_DEV);
+//mongoose.connect(process.env.DB_PROD);
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
