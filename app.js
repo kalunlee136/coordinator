@@ -1,3 +1,4 @@
+require('dotenv').config();
 var express = require('express');
 var path = require('path');
 var logger = require('morgan');
@@ -19,8 +20,8 @@ require('./models/Attendances');
 require('./models/Users');
 require('./config/passport');
 
-//mongoose.connect('mongodb://localhost/news');
-mongoose.connect('mongodb://kalunlee136:564213ab@ds019648.mlab.com:19648/coordinator');
+mongoose.connect(process.env.DB_DEV);
+//mongoose.connect(process.env.DB_PROD);
 
 app.use(logger('dev'));
 app.use(bodyParser.json());

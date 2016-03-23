@@ -1,6 +1,6 @@
-var app = angular.module('flapperNews', ['ui.router']);
+var app = angular.module('nightcoord', ['ui.router']);
 
-app.controller('MainCtrl', ['$scope','clubs', '$state', 'auth', function($scope,clubs,$state,auth){
+app.controller('MainCtrl', ['$scope','clubs', '$state', 'auth', '$http', function($scope,clubs,$state,auth, $http){
     $scope.location = clubs.location;
     $scope.locations = clubs.locations;
     
@@ -28,8 +28,60 @@ app.controller('MainCtrl', ['$scope','clubs', '$state', 'auth', function($scope,
        alert('Please log-in or register');
      }  
    }
-   
-   console.log(clubs.locations)
+  
+  console.log('loc',clubs.location)
+  
+  if(clubs.location.length > 1){
+  
+    $http.get('https://nominatim.openstreetmap.org/search?q='+clubs.location.toString()+'&format=json').then(function(coord){
+      var loc_coords = coord.data[0];
+
+      var locations = clubs.locations;
+      
+      var mapOptions = {
+          zoom: 14,
+          center: new google.maps.LatLng(loc_coords.lat, loc_coords.lon),
+          mapTypeId: google.maps.MapTypeId.TERRAIN
+      }
+  
+      $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
+  
+      $scope.markers = [];
+      
+      var infoWindow = new google.maps.InfoWindow();
+      
+      var createMarker = function (info){
+          
+          var marker = new google.maps.Marker({
+              map: $scope.map,
+              position: new google.maps.LatLng(info.location.coordinate.latitude, info.location.coordinate.longitude),
+              title: info.name
+          });
+          marker.content = '<div class="infoWindowContent">' +  info.location.display_address[0] + '<br>' + info.upvotes + ' people attending' + '</div>';
+          
+          google.maps.event.addListener(marker, 'click', function(){
+              infoWindow.setContent('<h3>' + marker.title + '</h3>' + marker.content);
+              infoWindow.open($scope.map, marker);
+          });
+          
+          $scope.markers.push(marker);
+          
+      }  
+      
+      for (var i = 0; i < locations.length; i++){
+          createMarker(locations[i]);
+      }
+  
+      $scope.openInfoWindow = function(e, selectedMarker){
+          e.preventDefault();
+          google.maps.event.trigger(selectedMarker, 'click');
+      }
+      
+      console.log('club loc', locations, loc_coords)
+      
+    })
+    
+  }
 
 }]);
 

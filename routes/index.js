@@ -19,6 +19,7 @@ module.exports = function(app){
       res.render('index');
     });
     
+    //returns all club locations in that city and appends the ones that have people attending
     app.post('/locations', function(req, res, next){
       // See http://www.yelp.com/developers/documentation/v2/search_api
       Attendance.find({city: req.body.location}, function(err, places){
@@ -48,6 +49,7 @@ module.exports = function(app){
       
     });
     
+    //get all attendances in db
     app.get('/attendance',function(req,res,next){
       Attendance.find(function(err, attendances){
         if(err){ return next(err); }
@@ -56,6 +58,7 @@ module.exports = function(app){
       });
     });
     
+    //handle upvote/downvote
     app.put('/attendance', auth,function(req,res,next){
       Attendance.findOne({name: req.body.location.name, city: req.body.location.city},function(err, place){
         console.log('place',place);

@@ -3,10 +3,6 @@ html, body {
   margin: 0; 
   padding: 0; 
 }
-#map { 
-  height: 100%; 
-  
-}
 
 a{
   color:black;
@@ -28,7 +24,6 @@ a{
   border-radius: 0.5em;
 }
 .club-list{
-  border: 1px groove;
   background-color: #EEE;
   border-radius: 0.5em;
 }
@@ -43,4 +38,31 @@ div.relative {
 .img-grid{
   float:left;
 }
- 
+
+/* google maps */
+#grid{
+  float:left;
+  width:50%;
+}
+
+#map {
+    height:420px;
+    width:550px;
+}
+#right-grid {
+    position:fixed;
+    display:inline-block;
+    height:420px;
+    width:550px;
+    margin-top: 25px;
+}
+
+.infoWindowContent {
+    font-size:  14px !important;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+}
+h2 {
+    margin-bottom:0;
+    margin-top: 0;
+}

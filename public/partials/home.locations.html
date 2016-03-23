@@ -1,15 +1,20 @@
-<div class="col-md-6 col-lg-6 col-sm-12 club-list">
-        <div class="box" ng-repeat="loc in locations">
-                <img class="img-grid" ng-src="{{loc.image_url}}" alt="{{loc.name}}"/>
-                
-                <div class="relative">
-                    <a ng-href={{loc.url}}>{{loc.name}} </a>
-                    <br> {{loc.location.display_address[0]}} 
-                    <br> {{loc.location.display_address[1]}} 
-                    <br> {{loc.location.display_address[2]}} 
-                    <br> <button ng-click="submit_attendance(loc,$index, loc.city)">Attend Event ({{loc.upvotes}})</button>
-                </div>
-                
-            </a>
-        </div>    
+<div class="col-md-12 col-lg-12 col-sm-12 club-list">
+    <div id="grid">
+        <div class="box" ng-repeat="marker in markers track by $index">
+            <img class="img-grid" ng-src="{{locations[$index].image_url}}" alt="{{locations[$index].name}}"/>
+            
+            <div class="relative">
+                    <a ng-href={{locations[$index].url}}><b>{{locations[$index].name}}</b> </a>
+                    <br> {{locations[$index].location.display_address[0]}} 
+                    <br> {{locations[$index].location.display_address[1]}} 
+                    <br> {{locations[$index].location.display_address[2]}} 
+                    <br> <button ng-click="submit_attendance(locations[$index],$index, locations[$index].city)">Attend Event ({{locations[$index].upvotes}})</button>
+                    <a href="#" ng-click="openInfoWindow($event, marker)">Map</a>
+            </div>
+        </div>
     </div>
+    <div id="right-grid">
+        <div id="map"></div>
+    </div>
+</div>
+

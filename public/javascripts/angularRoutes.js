@@ -1,7 +1,7 @@
 app.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider) {
     $stateProvider
        .state('home.locations',{
-          templateUrl: 'partials/home.locations.html'
+          templateUrl: 'partials/home.locations.html', controller: 'MainCtrl'
        })
       
       .state('home', {
